@@ -75,7 +75,7 @@ export default function DigitsPage() {
       />
 
       {/* Fixed footer */}
-      <div className="fixed bottom-0 left-0 right-0 py-2 text-center bg-background/80 backdrop-blur-sm z-50 border-t border-white/5">
+      <div className="fixed bottom-0 left-0 right-0 py-2 text-center bg-background/80 backdrop-blur-sm z-50 border-t border-border">
         <Footer />
       </div>
     </main>

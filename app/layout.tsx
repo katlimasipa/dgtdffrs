@@ -24,7 +24,7 @@ const fontClass =
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const logoSrc = getLogoSrc();
   return (
-    <html lang="en" className="h-full lg:h-auto dark" suppressHydrationWarning>
+    <html lang="en" className="h-full lg:h-auto" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

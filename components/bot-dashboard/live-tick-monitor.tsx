@@ -19,7 +19,7 @@ export function LiveTickMonitor({ tickBuffer }: LiveTickMonitorProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-end h-20 gap-2 overflow-hidden border-b border-white/5 pb-4">
+        <div className="flex items-center justify-end h-20 gap-2 overflow-hidden border-b border-border pb-4">
           <AnimatePresence mode="popLayout">
             {tickBuffer.map((digit, index) => (
               <motion.div

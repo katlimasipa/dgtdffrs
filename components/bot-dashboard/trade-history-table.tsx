@@ -29,7 +29,7 @@ export function TradeHistoryTable() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-white/10 hover:bg-transparent">
+                <TableRow className="border-border hover:bg-transparent">
                   <TableHead className="text-muted-foreground">Time</TableHead>
                   <TableHead className="text-muted-foreground">Pattern</TableHead>
                   <TableHead className="text-muted-foreground">Stake</TableHead>
@@ -38,7 +38,7 @@ export function TradeHistoryTable() {
               </TableHeader>
               <TableBody>
                 {trades.map((trade, i) => (
-                  <TableRow key={trade.id || i} className="border-white/10 hover:bg-white/5">
+                  <TableRow key={trade.id || i} className="border-border hover:bg-muted/50">
                     <TableCell>{new Date(trade.timestamp).toLocaleTimeString()}</TableCell>
                     <TableCell>
                       <span className="bg-primary/20 text-primary px-2 py-1 rounded-md text-xs font-medium">
