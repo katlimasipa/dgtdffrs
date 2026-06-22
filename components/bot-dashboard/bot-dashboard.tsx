@@ -52,7 +52,7 @@ export function BotDashboard(props: BotDashboardProps) {
   const [activeTab, setActiveTab] = useState<'monitor' | 'controls' | 'history'>('monitor');
 
   return (
-    <div className="flex flex-col w-full h-full pb-20 lg:pb-0 lg:max-w-[1400px] lg:mx-auto">
+    <div className="flex flex-col w-full flex-1 lg:max-w-[1400px] lg:mx-auto">
       {/* Header section with minimal padding */}
       <div className="px-4 py-4 lg:py-8 lg:px-8 border-b border-border bg-card">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -74,7 +74,7 @@ export function BotDashboard(props: BotDashboardProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-6 lg:p-8 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-32 lg:p-8 lg:pb-24 space-y-6">
         <OverviewPanel stats={runner.sessionStats} onReset={runner.resetSession} />
 
         <div className="lg:grid lg:grid-cols-[1fr_350px] gap-8">
