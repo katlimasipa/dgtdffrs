@@ -24,9 +24,15 @@ const fontClass =
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const logoSrc = getLogoSrc();
   return (
-    <html lang="en" className="h-full lg:h-auto" suppressHydrationWarning>
+    <html lang="en" className="h-full lg:h-auto dark" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet" />
+      </head>
       <body
-        className={`${fontClass} bg-background flex min-h-dvh flex-col overflow-hidden max-lg:h-dvh max-lg:overflow-hidden lg:block lg:h-auto lg:min-h-screen lg:overflow-x-hidden lg:overflow-y-auto`}
+        className={`bg-background flex min-h-dvh flex-col overflow-hidden max-lg:h-dvh max-lg:overflow-hidden lg:block lg:h-auto lg:min-h-screen lg:overflow-x-hidden lg:overflow-y-auto`}
+        style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
       >
         <TemplateLayout>
           <LogoSrcProvider logoSrc={logoSrc}>{children}</LogoSrcProvider>

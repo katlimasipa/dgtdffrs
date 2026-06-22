@@ -56,3 +56,16 @@ export async function clearHistory() {
   if (!db) return;
   return db.clear('trades');
 }
+
+export async function updateTradeResult(contractId: number, profit: number) {
+  const db = await getDB();
+  if (!db) return;
+  
+  const all = await db.getAll('trades');
+  const trade = all.find(t => t.contractId === contractId);
+  if (trade) {
+    trade.profit = profit;
+    trade.result = profit > 0 ? 'win' : profit < 0 ? 'loss' : 'pending';
+    await db.put('trades', trade);
+  }
+}

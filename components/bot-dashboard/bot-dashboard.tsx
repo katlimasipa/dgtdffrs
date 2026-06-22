@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { OverviewPanel } from './overview-panel';
 import { LiveTickMonitor } from './live-tick-monitor';
 import { PatternSettings } from './pattern-settings';
@@ -29,6 +30,7 @@ export function BotDashboard(props: BotDashboardProps) {
     proposal,
     symbols,
     selectSymbol,
+    closedPositions,
   } = props as any; // Using any for simplicity in this wrapper, normally map explicit props
 
   const runner = useBotRunner({
@@ -42,42 +44,81 @@ export function BotDashboard(props: BotDashboardProps) {
     buyResult,
     buyError,
     proposal,
+    closedPositions,
   });
 
+  const [activeTab, setActiveTab] = useState<'monitor' | 'controls' | 'history'>('monitor');
+
   return (
-    <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-6 gap-6 pb-24">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-            THPDTSMRTTRDR
-          </h1>
-          <p className="text-muted-foreground">Institutional Pattern Trading Engine</p>
-        </div>
-        <div className="w-full sm:w-72">
-          <SymbolSelector
-            symbols={symbols}
-            activeSymbol={activeSymbol}
-            onSymbolChange={selectSymbol}
-          />
+    <div className="flex flex-col w-full h-full pb-20 lg:pb-0 lg:max-w-[1400px] lg:mx-auto">
+      {/* Header section with minimal padding */}
+      <div className="px-4 py-4 lg:py-8 lg:px-8 border-b border-border bg-card">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h1 className="text-[var(--fs-xl)] font-bold tracking-tight leading-none uppercase text-primary">
+              Institutional Engine
+            </h1>
+            <p className="text-[var(--fs-sm)] tracking-widest uppercase text-muted-foreground font-semibold">
+              Pattern Detection System
+            </p>
+          </div>
+          <div className="w-full md:w-80">
+            <SymbolSelector
+              symbols={symbols}
+              activeSymbol={activeSymbol}
+              onSymbolChange={selectSymbol}
+            />
+          </div>
         </div>
       </div>
 
-      <OverviewPanel stats={runner.sessionStats} />
+      <div className="flex-1 overflow-y-auto px-4 py-6 lg:p-8 space-y-6">
+        <OverviewPanel stats={runner.sessionStats} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <LiveTickMonitor tickBuffer={runner.tickBuffer} />
-          <PatternSettings />
+        <div className="lg:grid lg:grid-cols-[1fr_350px] gap-8">
+          {/* Left Column (Monitor & Settings) */}
+          <div className={`space-y-6 lg:block ${activeTab === 'monitor' ? 'block' : 'hidden'}`}>
+            <LiveTickMonitor tickBuffer={runner.tickBuffer} />
+            <PatternSettings />
+          </div>
+
+          {/* Right Column (Controls & History) */}
+          <div className="space-y-6">
+            <div className={`lg:block ${activeTab === 'controls' ? 'block' : 'hidden'}`}>
+              <BotControls 
+                isRunning={runner.isRunning} 
+                isPaused={runner.isPaused}
+                onToggleBot={runner.toggleBot}
+                onPauseBot={runner.pauseBot}
+              />
+            </div>
+            <div className={`lg:block ${activeTab === 'history' ? 'block' : 'hidden'}`}>
+              <TradeHistoryTable />
+            </div>
+          </div>
         </div>
-        <div className="space-y-6">
-          <BotControls 
-            isRunning={runner.isRunning} 
-            isPaused={runner.isPaused}
-            onToggleBot={runner.toggleBot}
-            onPauseBot={runner.pauseBot}
-          />
-          <TradeHistoryTable />
-        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-12 left-0 right-0 h-16 bg-card border-t border-border flex items-center justify-around px-2 z-40">
+        <button 
+          onClick={() => setActiveTab('monitor')}
+          className={`flex-1 flex flex-col items-center justify-center gap-1 h-full text-[10px] uppercase tracking-wider font-bold transition-colors ${activeTab === 'monitor' ? 'text-primary' : 'text-muted-foreground'}`}
+        >
+          Monitor
+        </button>
+        <button 
+          onClick={() => setActiveTab('controls')}
+          className={`flex-1 flex flex-col items-center justify-center gap-1 h-full text-[10px] uppercase tracking-wider font-bold transition-colors ${activeTab === 'controls' ? 'text-primary' : 'text-muted-foreground'}`}
+        >
+          Controls
+        </button>
+        <button 
+          onClick={() => setActiveTab('history')}
+          className={`flex-1 flex flex-col items-center justify-center gap-1 h-full text-[10px] uppercase tracking-wider font-bold transition-colors ${activeTab === 'history' ? 'text-primary' : 'text-muted-foreground'}`}
+        >
+          History
+        </button>
       </div>
     </div>
   );

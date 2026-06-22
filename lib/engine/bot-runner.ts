@@ -3,7 +3,8 @@ import { Tick, ProposalInfo, BuyResult, DerivWS } from '@deriv/core';
 import { useBotSettings } from '../store/bot-settings-store';
 import { detectPattern } from './pattern-detector';
 import { canTrade, SessionStats } from './risk-manager';
-import { addTradeRecord } from '../store/trade-history-db';
+import { addTradeRecord, updateTradeResult, TradeRecord, getRecentTrades } from '../store/trade-history-db';
+import type { ClosedPosition } from '../types';
 
 interface UseBotRunnerParams {
   ws: DerivWS | null;
@@ -16,6 +17,7 @@ interface UseBotRunnerParams {
   buyResult: BuyResult | null;
   buyError: string | null;
   proposal: ProposalInfo | null;
+  closedPositions?: ClosedPosition[];
 }
 
 export function useBotRunner({
@@ -29,6 +31,7 @@ export function useBotRunner({
   buyResult,
   buyError,
   proposal,
+  closedPositions,
 }: UseBotRunnerParams) {
   const { settings } = useBotSettings();
   const [isRunning, setIsRunning] = useState(false);
@@ -79,6 +82,45 @@ export function useBotRunner({
       // The open positions hook from the existing repo handles the actual resolution.
     }
   }, [buyResult]);
+
+  // Handle closed positions resolution
+  useEffect(() => {
+    if (!closedPositions || closedPositions.length === 0) return;
+    
+    // Check recently closed positions against our pending trades
+    const resolveTrades = async () => {
+      const recentTrades = await getRecentTrades(20);
+      const pendingTrades = recentTrades.filter(t => t.result === 'pending');
+      
+      let newWins = 0;
+      let newLosses = 0;
+      let newPnL = 0;
+      
+      for (const trade of pendingTrades) {
+        const closed = closedPositions.find(p => p.contract_id === trade.contractId);
+        if (closed) {
+          const profit = closed.profit ?? 0;
+          await updateTradeResult(trade.contractId, profit);
+          
+          if (profit > 0) newWins++;
+          else if (profit < 0) newLosses++;
+          newPnL += profit;
+        }
+      }
+      
+      if (newWins > 0 || newLosses > 0) {
+        setSessionStats(prev => ({
+          ...prev,
+          totalTrades: prev.totalTrades + newWins + newLosses,
+          winCount: prev.winCount + newWins,
+          lossCount: prev.lossCount + newLosses,
+          sessionPnL: prev.sessionPnL + newPnL,
+        }));
+      }
+    };
+    
+    resolveTrades();
+  }, [closedPositions]);
 
   // Main evaluation loop
   useEffect(() => {

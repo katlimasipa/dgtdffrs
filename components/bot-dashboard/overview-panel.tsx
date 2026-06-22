@@ -13,42 +13,42 @@ export function OverviewPanel({ stats }: OverviewPanelProps) {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+      <Card className="bg-card border-border rounded-none shadow-none">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Session PnL</CardTitle>
+          <CardTitle className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Session PnL</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold ${stats.sessionPnL >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+          <div className={`text-2xl font-bold ${stats.sessionPnL >= 0 ? 'text-primary' : 'text-destructive'}`}>
             ${stats.sessionPnL.toFixed(2)}
           </div>
         </CardContent>
       </Card>
       
-      <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+      <Card className="bg-card border-border rounded-none shadow-none">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Win Rate</CardTitle>
+          <CardTitle className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Win Rate</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-primary">{winRate}%</div>
         </CardContent>
       </Card>
 
-      <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+      <Card className="bg-card border-border rounded-none shadow-none">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Trades Taken</CardTitle>
+          <CardTitle className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Trades Taken</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{stats.totalTrades} <span className="text-sm font-normal text-muted-foreground">/ {settings.maxTrades}</span></div>
         </CardContent>
       </Card>
 
-      <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+      <Card className="bg-card border-border rounded-none shadow-none">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">Current Strategy</CardTitle>
+          <CardTitle className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Current Strategy</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-lg font-semibold truncate">{settings.triggerMode.replace('_', ' ')}</div>
-          <p className="text-xs text-muted-foreground">Streak: {settings.streakLength}</p>
+          <div className="text-lg font-bold tracking-tight uppercase truncate">{settings.triggerMode.replace('_', ' ')}</div>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mt-1">Streak: {settings.streakLength}</p>
         </CardContent>
       </Card>
     </div>
