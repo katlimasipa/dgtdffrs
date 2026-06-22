@@ -4,7 +4,7 @@ import { useBotSettings } from '../store/bot-settings-store';
 import { detectPattern } from './pattern-detector';
 import { canTrade, SessionStats } from './risk-manager';
 import { addTradeRecord, updateTradeResult, TradeRecord, getRecentTrades } from '../store/trade-history-db';
-import type { ClosedPosition } from '../types';
+import type { ClosedPosition, OpenPosition } from '../types';
 
 interface UseBotRunnerParams {
   ws: DerivWS | null;
