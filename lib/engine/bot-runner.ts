@@ -68,7 +68,7 @@ export function useBotRunner({
       // In a real implementation we would subscribe to proposal_open_contract to get the exact profit/loss.
       // For this demo hook, we assume buyResult contains the ID and we just log it as pending.
       addTradeRecord({
-        contractId: buyResult.contract_id,
+        contractId: (buyResult as any).contractId || (buyResult as any).contract_id || 0,
         timestamp: Date.now(),
         stake: settings.stake,
         result: 'pending',

@@ -8,9 +8,14 @@ import { TradeHistoryTable } from './trade-history-table';
 import { useBotRunner } from '@/lib/engine/bot-runner';
 import { SymbolSelector } from '@/components/custom/symbol-selector';
 import type { DigitsViewProps } from '../digits-view';
+import type { DerivWS } from '@deriv/core';
+
+export interface BotDashboardProps extends DigitsViewProps {
+  ws: DerivWS | null;
+}
 
 // Reusing the props from DigitsView so we can swap it cleanly in page.tsx
-export function BotDashboard(props: DigitsViewProps) {
+export function BotDashboard(props: BotDashboardProps) {
   const {
     ws,
     isConnected,
