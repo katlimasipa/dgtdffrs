@@ -71,6 +71,7 @@ export default function DigitsPage() {
         buyResult={trading.buyResult}
         buyError={trading.buyError}
         clearBuyResult={trading.clearBuyResult}
+        openPositions={trading.openPositions}
         closedPositions={trading.closedPositions}
       />
 

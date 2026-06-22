@@ -14,6 +14,7 @@ import type { ClosedPosition } from '@/lib/types';
 
 export interface BotDashboardProps extends DigitsViewProps {
   ws: DerivWS | null;
+  openPositions?: any[];
   closedPositions?: ClosedPosition[];
 }
 
@@ -32,6 +33,7 @@ export function BotDashboard(props: BotDashboardProps) {
     proposal,
     symbols,
     selectSymbol,
+    openPositions,
     closedPositions,
   } = props as any; // Using any for simplicity in this wrapper, normally map explicit props
 
@@ -46,6 +48,7 @@ export function BotDashboard(props: BotDashboardProps) {
     buyResult,
     buyError,
     proposal,
+    openPositions,
     closedPositions,
   });
 

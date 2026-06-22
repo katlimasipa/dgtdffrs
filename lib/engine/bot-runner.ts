@@ -17,6 +17,7 @@ interface UseBotRunnerParams {
   buyResult: BuyResult | null;
   buyError: string | null;
   proposal: ProposalInfo | null;
+  openPositions?: OpenPosition[];
   closedPositions?: ClosedPosition[];
 }
 
@@ -31,6 +32,7 @@ export function useBotRunner({
   buyResult,
   buyError,
   proposal,
+  openPositions,
   closedPositions,
 }: UseBotRunnerParams) {
   const { settings } = useBotSettings();
@@ -88,36 +90,47 @@ export function useBotRunner({
   // Handle buy result updates to stats & db
   useEffect(() => {
     if (buyResult && isRunning) {
-      // In a real implementation we would subscribe to proposal_open_contract to get the exact profit/loss.
-      // For this demo hook, we assume buyResult contains the ID and we just log it as pending.
-      addTradeRecord({
-        contractId: (buyResult as any).contractId || (buyResult as any).contract_id || 0,
-        timestamp: Date.now(),
-        stake: settings.stake,
-        result: 'pending',
-        profit: 0,
-        triggerMode: settings.triggerMode,
-        patternDetected: 'Pattern', // Can be refined
-      });
-      // The open positions hook from the existing repo handles the actual resolution.
+      const bRes = buyResult as any;
+      const cid = bRes.buy?.contract_id || bRes.contract_id || bRes.contractId || 0;
+      if (cid) {
+        addTradeRecord({
+          contractId: cid,
+          timestamp: Date.now(),
+          stake: settings.stake,
+          result: 'pending',
+          profit: 0,
+          triggerMode: settings.triggerMode,
+          patternDetected: 'Pattern',
+        });
+      }
     }
   }, [buyResult]);
 
   // Handle closed positions resolution
   useEffect(() => {
-    if (!closedPositions || closedPositions.length === 0) return;
-    
-    // Check recently closed positions against our pending trades
     const resolveTrades = async () => {
       const recentTrades = await getRecentTrades(20);
       const pendingTrades = recentTrades.filter(t => t.result === 'pending');
+      if (pendingTrades.length === 0) return;
       
       let newWins = 0;
       let newLosses = 0;
       let newPnL = 0;
       
       for (const trade of pendingTrades) {
-        const closed = closedPositions.find(p => p.contract_id === trade.contractId);
+        // Check openPositions for recently sold contracts
+        const openPos = openPositions?.find(p => p.contract_id === trade.contractId);
+        if (openPos && openPos.is_sold) {
+          const profit = Number(openPos.profit) || 0;
+          await updateTradeResult(trade.contractId, profit);
+          if (profit > 0) newWins++;
+          else if (profit < 0) newLosses++;
+          newPnL += profit;
+          continue;
+        }
+
+        // Check closedPositions as fallback
+        const closed = closedPositions?.find(p => p.contract_id === trade.contractId);
         if (closed) {
           const profit = closed.sell_price - closed.buy_price;
           await updateTradeResult(trade.contractId, profit);
@@ -140,7 +153,7 @@ export function useBotRunner({
     };
     
     resolveTrades();
-  }, [closedPositions]);
+  }, [closedPositions, openPositions, updateSessionStats]);
 
   // Main evaluation loop
   useEffect(() => {
