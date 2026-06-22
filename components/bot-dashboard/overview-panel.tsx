@@ -4,9 +4,10 @@ import { SessionStats } from '@/lib/engine/risk-manager';
 
 interface OverviewPanelProps {
   stats: SessionStats;
+  onReset: () => void;
 }
 
-export function OverviewPanel({ stats }: OverviewPanelProps) {
+export function OverviewPanel({ stats, onReset }: OverviewPanelProps) {
   const { settings } = useBotSettings();
 
   const winRate = stats.totalTrades > 0 ? ((stats.winCount / stats.totalTrades) * 100).toFixed(1) : '0.0';
@@ -44,7 +45,15 @@ export function OverviewPanel({ stats }: OverviewPanelProps) {
 
       <Card className="bg-card border-border rounded-none shadow-none">
         <CardHeader className="pb-2">
-          <CardTitle className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Current Strategy</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Current Strategy</CardTitle>
+            <button 
+              onClick={onReset}
+              className="text-[10px] uppercase tracking-widest font-bold text-destructive hover:text-destructive/80 transition-colors"
+            >
+              Reset Session
+            </button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-lg font-bold tracking-tight uppercase truncate">{settings.triggerMode.replace('_', ' ')}</div>

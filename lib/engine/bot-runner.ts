@@ -37,12 +37,32 @@ export function useBotRunner({
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   
-  const [sessionStats, setSessionStats] = useState<SessionStats>({
+  const [sessionStatsMap, setSessionStatsMap] = useState<Record<string, SessionStats>>({});
+  const currentStrategy = settings.triggerMode;
+  
+  const sessionStats = sessionStatsMap[currentStrategy] || {
     totalTrades: 0,
     winCount: 0,
     lossCount: 0,
     sessionPnL: 0,
-  });
+  };
+
+  const updateSessionStats = useCallback((updater: (prev: SessionStats) => SessionStats) => {
+    setSessionStatsMap(prevMap => {
+      const prevStats = prevMap[currentStrategy] || { totalTrades: 0, winCount: 0, lossCount: 0, sessionPnL: 0 };
+      return {
+        ...prevMap,
+        [currentStrategy]: updater(prevStats),
+      };
+    });
+  }, [currentStrategy]);
+
+  const resetSession = useCallback(() => {
+    setSessionStatsMap(prevMap => ({
+      ...prevMap,
+      [currentStrategy]: { totalTrades: 0, winCount: 0, lossCount: 0, sessionPnL: 0 },
+    }));
+  }, [currentStrategy]);
 
   const [tickBuffer, setTickBuffer] = useState<number[]>([]);
   const [lastCooldownTime, setLastCooldownTime] = useState<number>(0);
@@ -109,7 +129,7 @@ export function useBotRunner({
       }
       
       if (newWins > 0 || newLosses > 0) {
-        setSessionStats(prev => ({
+        updateSessionStats(prev => ({
           ...prev,
           totalTrades: prev.totalTrades + newWins + newLosses,
           winCount: prev.winCount + newWins,
@@ -176,7 +196,7 @@ export function useBotRunner({
       setIsRunning(true);
       setIsPaused(false);
       setTickBuffer([]);
-      setSessionStats({ totalTrades: 0, winCount: 0, lossCount: 0, sessionPnL: 0 }); // Reset stats for new session
+      // We no longer automatically reset stats here; users can use resetSession explicitly or we can keep it accumulating per strategy
     }
   }, [isRunning]);
 
@@ -189,6 +209,7 @@ export function useBotRunner({
     pauseBot,
     sessionStats,
     tickBuffer,
-    setSessionStats, // Allow external update from open positions resolution
+    updateSessionStats, // Allow external update from open positions resolution
+    resetSession,
   };
 }

@@ -52,19 +52,22 @@ export function SymbolSelector({
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Select a symbol" />
       </SelectTrigger>
-      <SelectContent>
-        {Array.from(grouped.entries()).map(([submarket, { displayName, symbols: group }]) => (
-          <SelectGroup key={submarket}>
-            <SelectLabel>{displayName}</SelectLabel>
-            {group.map((symbol) => (
-              <SelectItem
-                key={symbol.underlying_symbol}
-                value={symbol.underlying_symbol}
-              >
-                {symbol.underlying_symbol_name}
-              </SelectItem>
-            ))}
-          </SelectGroup>
+      <SelectContent className="max-h-[300px]">
+        {Array.from(grouped.entries()).map(([submarket, { displayName, symbols: group }], index) => (
+          <div key={submarket} className={index > 0 ? "border-t border-border mt-1 pt-1" : ""}>
+            <SelectGroup>
+              <SelectLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold px-2 py-1.5">{displayName}</SelectLabel>
+              {group.map((symbol) => (
+                <SelectItem
+                  key={symbol.underlying_symbol}
+                  value={symbol.underlying_symbol}
+                  className="pl-4 font-medium"
+                >
+                  {symbol.underlying_symbol_name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </div>
         ))}
       </SelectContent>
     </Select>
