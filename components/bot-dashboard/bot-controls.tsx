@@ -11,7 +11,7 @@ interface BotControlsProps {
 
 export function BotControls({ isRunning, isPaused, onToggleBot, onPauseBot }: BotControlsProps) {
   return (
-    <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+    <Card className="bg-card border-border shadow-none">
       <CardContent className="flex items-center justify-center gap-4 p-6">
         {!isRunning ? (
           <Button 

@@ -18,7 +18,7 @@ export function TradeHistoryTable() {
   }, []);
 
   return (
-    <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+    <Card className="bg-card border-border shadow-none">
       <CardHeader>
         <CardTitle className="text-lg">Recent Bot Executions</CardTitle>
       </CardHeader>
@@ -42,7 +42,7 @@ export function TradeHistoryTable() {
                     <TableCell>{new Date(trade.timestamp).toLocaleTimeString()}</TableCell>
                     <TableCell>
                       <span className="bg-primary/20 text-primary px-2 py-1 rounded-md text-xs font-medium">
-                        {trade.triggerMode}
+                        {trade.triggerMode.replace(/_/g, ' ')}
                       </span>
                     </TableCell>
                     <TableCell>${trade.stake.toFixed(2)}</TableCell>

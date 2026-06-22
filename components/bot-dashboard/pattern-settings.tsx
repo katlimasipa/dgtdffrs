@@ -9,7 +9,7 @@ export function PatternSettings() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+      <Card className="bg-card border-border shadow-none">
         <CardHeader>
           <CardTitle className="text-lg">Strategy Settings</CardTitle>
         </CardHeader>
@@ -20,7 +20,7 @@ export function PatternSettings() {
               value={settings.triggerMode} 
               onValueChange={(val: TriggerMode) => updateSettings({ triggerMode: val })}
             >
-              <SelectTrigger className="bg-black/20 border-white/10">
+              <SelectTrigger>
                 <SelectValue placeholder="Select trigger mode" />
               </SelectTrigger>
               <SelectContent>
@@ -40,7 +40,6 @@ export function PatternSettings() {
               <Input 
                 type="number" 
                 min={2} max={10} 
-                className="bg-black/20 border-white/10"
                 value={settings.streakLength} 
                 onChange={e => updateSettings({ streakLength: Number(e.target.value) })}
               />
@@ -51,7 +50,6 @@ export function PatternSettings() {
                 <Input 
                   type="number" 
                   min={0} max={9} 
-                  className="bg-black/20 border-white/10"
                   value={settings.targetDigit} 
                   onChange={e => updateSettings({ targetDigit: Number(e.target.value) })}
                 />
@@ -61,7 +59,7 @@ export function PatternSettings() {
         </CardContent>
       </Card>
 
-      <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg">
+      <Card className="bg-card border-border shadow-none">
         <CardHeader>
           <CardTitle className="text-lg">Risk Management</CardTitle>
         </CardHeader>
@@ -72,7 +70,6 @@ export function PatternSettings() {
               <Input 
                 type="number" 
                 min={0.35} step={0.5} 
-                className="bg-black/20 border-white/10"
                 value={settings.stake} 
                 onChange={e => updateSettings({ stake: Number(e.target.value) })}
               />
@@ -82,7 +79,6 @@ export function PatternSettings() {
               <Input 
                 type="number" 
                 min={0} 
-                className="bg-black/20 border-white/10"
                 value={settings.cooldownSeconds} 
                 onChange={e => updateSettings({ cooldownSeconds: Number(e.target.value) })}
               />
@@ -92,7 +88,7 @@ export function PatternSettings() {
               <Input 
                 type="number" 
                 min={0} 
-                className="bg-black/20 border-white/10 text-red-400"
+                className="text-red-400"
                 value={settings.stopLoss} 
                 onChange={e => updateSettings({ stopLoss: Number(e.target.value) })}
               />
@@ -102,7 +98,7 @@ export function PatternSettings() {
               <Input 
                 type="number" 
                 min={0} 
-                className="bg-black/20 border-white/10 text-green-400"
+                className="text-green-400"
                 value={settings.takeProfit} 
                 onChange={e => updateSettings({ takeProfit: Number(e.target.value) })}
               />
@@ -113,3 +109,4 @@ export function PatternSettings() {
     </div>
   );
 }
+

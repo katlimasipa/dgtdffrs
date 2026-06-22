@@ -77,48 +77,26 @@ export function BotDashboard(props: BotDashboardProps) {
       <div className="flex-1 overflow-y-auto px-4 py-6 lg:p-8 space-y-6">
         <OverviewPanel stats={runner.sessionStats} onReset={runner.resetSession} />
 
-        {/* Desktop Navigation Tabs */}
-        <div className="hidden lg:flex items-center gap-4 border-b border-border pb-px">
-          <button 
-            onClick={() => setActiveTab('monitor')}
-            className={`px-4 py-2 text-sm uppercase tracking-wider font-bold transition-colors border-b-2 ${activeTab === 'monitor' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
-          >
-            Monitor & Settings
-          </button>
-          <button 
-            onClick={() => setActiveTab('controls')}
-            className={`px-4 py-2 text-sm uppercase tracking-wider font-bold transition-colors border-b-2 ${activeTab === 'controls' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
-          >
-            Bot Controls
-          </button>
-          <button 
-            onClick={() => setActiveTab('history')}
-            className={`px-4 py-2 text-sm uppercase tracking-wider font-bold transition-colors border-b-2 ${activeTab === 'history' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
-          >
-            Trade History
-          </button>
-        </div>
-
-        <div className="w-full">
-          {/* Monitor & Settings Tab */}
-          <div className={`space-y-6 ${activeTab === 'monitor' ? 'block' : 'hidden'}`}>
+        <div className="lg:grid lg:grid-cols-[1fr_350px] gap-8">
+          {/* Left Column (Monitor & Settings) */}
+          <div className={`space-y-6 lg:block ${activeTab === 'monitor' ? 'block' : 'hidden'}`}>
             <LiveTickMonitor tickBuffer={runner.tickBuffer} />
             <PatternSettings />
           </div>
 
-          {/* Controls Tab */}
-          <div className={`space-y-6 ${activeTab === 'controls' ? 'block' : 'hidden'}`}>
-            <BotControls 
-              isRunning={runner.isRunning} 
-              isPaused={runner.isPaused}
-              onToggleBot={runner.toggleBot}
-              onPauseBot={runner.pauseBot}
-            />
-          </div>
-
-          {/* History Tab */}
-          <div className={`space-y-6 ${activeTab === 'history' ? 'block' : 'hidden'}`}>
-            <TradeHistoryTable />
+          {/* Right Column (Controls & History) */}
+          <div className={`space-y-6 lg:block ${activeTab === 'controls' || activeTab === 'history' ? 'block' : 'hidden'}`}>
+            <div className={`lg:block ${activeTab === 'controls' ? 'block' : 'hidden'}`}>
+              <BotControls 
+                isRunning={runner.isRunning} 
+                isPaused={runner.isPaused}
+                onToggleBot={runner.toggleBot}
+                onPauseBot={runner.pauseBot}
+              />
+            </div>
+            <div className={`lg:block ${activeTab === 'history' ? 'block' : 'hidden'}`}>
+              <TradeHistoryTable />
+            </div>
           </div>
         </div>
       </div>

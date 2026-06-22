@@ -7,7 +7,7 @@ interface LiveTickMonitorProps {
 
 export function LiveTickMonitor({ tickBuffer }: LiveTickMonitorProps) {
   return (
-    <Card className="bg-white/5 backdrop-blur-xl border-white/10 shadow-lg overflow-hidden relative">
+    <Card className="bg-card border-border shadow-none overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none" />
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
