@@ -10,9 +10,11 @@ import { useBotRunner } from '@/lib/engine/bot-runner';
 import { SymbolSelector } from '@/components/custom/symbol-selector';
 import type { DigitsViewProps } from '../digits-view';
 import type { DerivWS } from '@deriv/core';
+import type { ClosedPosition } from '@/lib/types';
 
 export interface BotDashboardProps extends DigitsViewProps {
   ws: DerivWS | null;
+  closedPositions?: ClosedPosition[];
 }
 
 // Reusing the props from DigitsView so we can swap it cleanly in page.tsx

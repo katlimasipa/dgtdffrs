@@ -99,7 +99,7 @@ export function useBotRunner({
       for (const trade of pendingTrades) {
         const closed = closedPositions.find(p => p.contract_id === trade.contractId);
         if (closed) {
-          const profit = closed.profit ?? 0;
+          const profit = closed.sell_price - closed.buy_price;
           await updateTradeResult(trade.contractId, profit);
           
           if (profit > 0) newWins++;
