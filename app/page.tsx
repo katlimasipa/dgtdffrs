@@ -16,7 +16,7 @@ export default function DigitsPage() {
   const trading = useDigitsTrading({ ws, isConnected, isExhausted, isAuthenticated: !!auth.wsUrl, onAuthWSFailed: logout });
 
   return (
-    <main className="flex flex-col bg-background min-h-dvh">
+    <main className="flex flex-col bg-background h-dvh overflow-hidden">
       <Header
         authState={authState}
         accounts={accounts}

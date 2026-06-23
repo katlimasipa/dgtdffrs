@@ -1,13 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { OverviewPanel } from './overview-panel';
-import { LiveTickMonitor } from './live-tick-monitor';
-import { PatternSettings } from './pattern-settings';
+import { StrategyPanel } from './strategy-panel';
+import { CenterContent } from './center-content';
+import { SessionPanel } from './session-panel';
 import { BotControls } from './bot-controls';
-import { TradeHistoryTable } from './trade-history-table';
 import { useBotRunner } from '@/lib/engine/bot-runner';
-import { SymbolSelector } from '@/components/custom/symbol-selector';
 import type { DigitsViewProps } from '../digits-view';
 import type { DerivWS } from '@deriv/core';
 import type { ClosedPosition } from '@/lib/types';
@@ -18,7 +16,6 @@ export interface BotDashboardProps extends DigitsViewProps {
   closedPositions?: ClosedPosition[];
 }
 
-// Reusing the props from DigitsView so we can swap it cleanly in page.tsx
 export function BotDashboard(props: BotDashboardProps) {
   const {
     ws,
@@ -35,7 +32,7 @@ export function BotDashboard(props: BotDashboardProps) {
     selectSymbol,
     openPositions,
     closedPositions,
-  } = props as any; // Using any for simplicity in this wrapper, normally map explicit props
+  } = props as any;
 
   const runner = useBotRunner({
     ws,
@@ -52,77 +49,112 @@ export function BotDashboard(props: BotDashboardProps) {
     closedPositions,
   });
 
-  const [activeTab, setActiveTab] = useState<'monitor' | 'controls' | 'history'>('monitor');
+  const [mobileTab, setMobileTab] = useState<'strategy' | 'dashboard' | 'session'>('dashboard');
 
   return (
-    <div className="flex flex-col w-full flex-1 lg:max-w-[1400px] lg:mx-auto">
-      {/* Header section with minimal padding */}
-      <div className="px-4 py-4 lg:py-8 lg:px-8 border-b border-border bg-card">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="space-y-1">
-            <h1 className="text-[var(--fs-xl)] font-bold tracking-tight leading-none uppercase text-primary">
-              Institutional Engine
-            </h1>
-            <p className="text-[var(--fs-sm)] tracking-widest uppercase text-muted-foreground font-semibold">
-              Pattern Detection System
-            </p>
-          </div>
-          <div className="w-full md:w-80">
-            <SymbolSelector
-              symbols={symbols}
-              activeSymbol={activeSymbol}
-              onSymbolChange={selectSymbol}
+    <div className="flex flex-col w-full flex-1">
+      {/* Desktop 3-column layout */}
+      <div className="hidden lg:grid lg:grid-cols-[240px_1fr_280px] h-full overflow-hidden">
+        {/* Left Sidebar - Strategy */}
+        <aside className="border-r border-border overflow-y-auto p-5 space-y-6">
+          <StrategyPanel
+            symbols={symbols}
+            activeSymbol={activeSymbol}
+            onSymbolChange={selectSymbol}
+          />
+          <div className="pt-2">
+            <BotControls
+              isRunning={runner.isRunning}
+              isPaused={runner.isPaused}
+              onToggleBot={runner.toggleBot}
+              onPauseBot={runner.pauseBot}
             />
           </div>
-        </div>
+        </aside>
+
+        {/* Center - Main Content */}
+        <main className="overflow-y-auto p-6 pb-20">
+          <CenterContent
+            currentTick={currentTick}
+            tickBuffer={runner.tickBuffer}
+            activeSymbol={activeSymbol?.symbol}
+            pipSize={pipSize}
+            closedPositions={closedPositions}
+          />
+        </main>
+
+        {/* Right Sidebar - Session Stats */}
+        <aside className="border-l border-border overflow-y-auto p-5">
+          <SessionPanel
+            stats={runner.sessionStats}
+            isRunning={runner.isRunning}
+            isPaused={runner.isPaused}
+            activeSymbol={activeSymbol?.symbol}
+            tickBuffer={runner.tickBuffer}
+            onReset={runner.resetSession}
+          />
+        </aside>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-32 lg:p-8 lg:pb-24 space-y-6">
-        <OverviewPanel stats={runner.sessionStats} onReset={runner.resetSession} />
-
-        <div className="lg:grid lg:grid-cols-[1fr_350px] gap-8">
-          {/* Left Column (Monitor & Settings) */}
-          <div className={`space-y-6 lg:block ${activeTab === 'monitor' ? 'block' : 'hidden'}`}>
-            <LiveTickMonitor tickBuffer={runner.tickBuffer} />
-            <PatternSettings />
-          </div>
-
-          {/* Right Column (Controls & History) */}
-          <div className={`space-y-6 lg:block ${activeTab === 'controls' || activeTab === 'history' ? 'block' : 'hidden'}`}>
-            <div className={`lg:block ${activeTab === 'controls' ? 'block' : 'hidden'}`}>
-              <BotControls 
-                isRunning={runner.isRunning} 
+      {/* Mobile layout */}
+      <div className="lg:hidden flex-1 overflow-y-auto pb-32">
+        <div className="p-4">
+          {mobileTab === 'strategy' && (
+            <div className="space-y-6">
+              <StrategyPanel
+                symbols={symbols}
+                activeSymbol={activeSymbol}
+                onSymbolChange={selectSymbol}
+              />
+              <BotControls
+                isRunning={runner.isRunning}
                 isPaused={runner.isPaused}
                 onToggleBot={runner.toggleBot}
                 onPauseBot={runner.pauseBot}
               />
             </div>
-            <div className={`lg:block ${activeTab === 'history' ? 'block' : 'hidden'}`}>
-              <TradeHistoryTable />
-            </div>
-          </div>
+          )}
+          {mobileTab === 'dashboard' && (
+            <CenterContent
+              currentTick={currentTick}
+              tickBuffer={runner.tickBuffer}
+              activeSymbol={activeSymbol?.symbol}
+              pipSize={pipSize}
+              closedPositions={closedPositions}
+            />
+          )}
+          {mobileTab === 'session' && (
+            <SessionPanel
+              stats={runner.sessionStats}
+              isRunning={runner.isRunning}
+              isPaused={runner.isPaused}
+              activeSymbol={activeSymbol?.symbol}
+              tickBuffer={runner.tickBuffer}
+              onReset={runner.resetSession}
+            />
+          )}
         </div>
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="lg:hidden fixed bottom-12 left-0 right-0 h-16 bg-card border-t border-border flex items-center justify-around px-2 z-40">
-        <button 
-          onClick={() => setActiveTab('monitor')}
-          className={`flex-1 flex flex-col items-center justify-center gap-1 h-full text-[10px] uppercase tracking-wider font-bold transition-colors ${activeTab === 'monitor' ? 'text-primary' : 'text-muted-foreground'}`}
+      <div className="lg:hidden fixed bottom-12 left-0 right-0 h-14 bg-card/95 backdrop-blur-sm border-t border-border flex items-center justify-around z-40">
+        <button
+          onClick={() => setMobileTab('strategy')}
+          className={`flex-1 h-full text-[10px] uppercase tracking-widest font-bold transition-colors ${mobileTab === 'strategy' ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          Monitor
+          Strategy
         </button>
-        <button 
-          onClick={() => setActiveTab('controls')}
-          className={`flex-1 flex flex-col items-center justify-center gap-1 h-full text-[10px] uppercase tracking-wider font-bold transition-colors ${activeTab === 'controls' ? 'text-primary' : 'text-muted-foreground'}`}
+        <button
+          onClick={() => setMobileTab('dashboard')}
+          className={`flex-1 h-full text-[10px] uppercase tracking-widest font-bold transition-colors ${mobileTab === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          Controls
+          Dashboard
         </button>
-        <button 
-          onClick={() => setActiveTab('history')}
-          className={`flex-1 flex flex-col items-center justify-center gap-1 h-full text-[10px] uppercase tracking-wider font-bold transition-colors ${activeTab === 'history' ? 'text-primary' : 'text-muted-foreground'}`}
+        <button
+          onClick={() => setMobileTab('session')}
+          className={`flex-1 h-full text-[10px] uppercase tracking-widest font-bold transition-colors ${mobileTab === 'session' ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          History
+          Session
         </button>
       </div>
     </div>

@@ -65,7 +65,7 @@ export async function updateTradeResult(contractId: number, profit: number) {
   const trade = all.find(t => t.contractId === contractId);
   if (trade) {
     trade.profit = profit;
-    trade.result = profit > 0 ? 'win' : profit < 0 ? 'loss' : 'pending';
+    trade.result = profit >= 0 ? 'win' : 'loss';
     await db.put('trades', trade);
   }
 }

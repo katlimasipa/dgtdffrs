@@ -1,6 +1,5 @@
 import { Play, Square, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 
 interface BotControlsProps {
   isRunning: boolean;
@@ -11,38 +10,31 @@ interface BotControlsProps {
 
 export function BotControls({ isRunning, isPaused, onToggleBot, onPauseBot }: BotControlsProps) {
   return (
-    <Card className="bg-card border-border shadow-none">
-      <CardContent className="flex items-center justify-center gap-4 p-6">
-        {!isRunning ? (
-          <Button 
-            size="lg" 
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold tracking-wide"
+    <div className="space-y-3">
+      {!isRunning ? (
+        <button
+          onClick={onToggleBot}
+          className="w-full h-10 bg-primary/90 hover:bg-primary text-primary-foreground font-bold text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+        >
+          <Play className="h-3.5 w-3.5" /> Connect
+        </button>
+      ) : (
+        <div className="flex gap-2">
+          <button
             onClick={onToggleBot}
+            className="flex-1 h-10 bg-destructive/90 hover:bg-destructive text-destructive-foreground font-bold text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
           >
-            <Play className="mr-2 h-5 w-5" /> Start Trading Bot
-          </Button>
-        ) : (
-          <>
-            <Button 
-              size="lg" 
-              variant="destructive"
-              className="w-full sm:w-auto font-bold tracking-wide shadow-[0_0_15px_rgba(239,68,68,0.5)]"
-              onClick={onToggleBot}
-            >
-              <Square className="mr-2 h-5 w-5" /> Stop Bot
-            </Button>
-            <Button 
-              size="lg" 
-              variant="secondary"
-              className="w-full sm:w-auto font-bold tracking-wide bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-500 border border-yellow-500/50"
-              onClick={onPauseBot}
-            >
-              {isPaused ? <Play className="mr-2 h-5 w-5" /> : <Pause className="mr-2 h-5 w-5" />}
-              {isPaused ? 'Resume' : 'Pause'}
-            </Button>
-          </>
-        )}
-      </CardContent>
-    </Card>
+            <Square className="h-3.5 w-3.5" /> Stop
+          </button>
+          <button
+            onClick={onPauseBot}
+            className="flex-1 h-10 border border-yellow-500/50 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 font-bold text-xs uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+          >
+            {isPaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+            {isPaused ? 'Resume' : 'Pause'}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }

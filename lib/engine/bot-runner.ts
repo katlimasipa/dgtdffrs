@@ -88,11 +88,13 @@ export function useBotRunner({
   }, [currentTick, pipSize, isRunning, isPaused]);
 
   // Handle buy result updates to stats & db
+  const lastRecordedCidRef = useRef<number>(0);
   useEffect(() => {
     if (buyResult && isRunning) {
       const bRes = buyResult as any;
       const cid = bRes.buy?.contract_id || bRes.contract_id || bRes.contractId || 0;
-      if (cid) {
+      if (cid && cid !== lastRecordedCidRef.current) {
+        lastRecordedCidRef.current = cid;
         addTradeRecord({
           contractId: cid,
           timestamp: Date.now(),
@@ -104,7 +106,7 @@ export function useBotRunner({
         });
       }
     }
-  }, [buyResult]);
+  }, [buyResult, isRunning, settings]);
 
   // Handle closed positions resolution
   useEffect(() => {
